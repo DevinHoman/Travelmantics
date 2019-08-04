@@ -52,6 +52,15 @@ public class DealActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = new MenuInflater(this);
         inflater.inflate(R.menu.save_menu ,menu);
+        if(FirebaseUtil.isAdmin == true){
+            menu.findItem(R.id.delete_menu).setVisible(true);
+            menu.findItem(R.id.save_menu).setVisible(true);
+            enableEditTexts(true);
+        }else{
+            menu.findItem(R.id.delete_menu).setVisible(false);
+            menu.findItem(R.id.save_menu).setVisible(false);
+            enableEditTexts(false);
+        }
         return true;
     }
 
@@ -110,6 +119,12 @@ public class DealActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
+    }
+
+    private void enableEditTexts(Boolean isEnabled){
+       txtTitle.setEnabled(isEnabled);
+       txtPrice.setEnabled(isEnabled);
+       txtDescription.setEnabled(isEnabled);
     }
 
     @Override
