@@ -24,10 +24,12 @@ import java.util.ArrayList;
 public class ListActivity extends AppCompatActivity {
 
     ArrayList<TravelDeal> deals;
-    private FirebaseDatabase mFirebaseDatabase;
+   /* private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
-    private ChildEventListener mChildListner;
-    private FirebaseUtil firebaseUtil;
+    private ChildEventListener mChildListner;*/
+   FirebaseUtil firebaseUtil;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +45,8 @@ public class ListActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.list_activity_menu ,menu);
         MenuItem insertMenu = menu.findItem(R.id.insert_menu);
-        if(FirebaseUtil.isAdmin == true){
+
+        if(FirebaseUtil.isAdmin){
             insertMenu.setVisible(true);
         }else{
             insertMenu.setVisible(false);
@@ -69,7 +72,7 @@ public class ListActivity extends AppCompatActivity {
                             }
                         });
                 FirebaseUtil.detachListener();
-
+                return true;
 
         }
         return super.onOptionsItemSelected(item);
@@ -86,7 +89,7 @@ public class ListActivity extends AppCompatActivity {
         super.onResume();
         FirebaseUtil.openFbReference("traveldeals",this);
         RecyclerView rvDeals = (RecyclerView)findViewById(R.id.rvDeals);
-        DealAdapter dealAdapter = new DealAdapter();
+        final DealAdapter dealAdapter = new DealAdapter();
         rvDeals.setAdapter(dealAdapter);
         LinearLayoutManager dealsLayoutManager =
                 new LinearLayoutManager(this,RecyclerView.VERTICAL,false);

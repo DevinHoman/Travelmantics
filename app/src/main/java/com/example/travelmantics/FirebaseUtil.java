@@ -1,6 +1,5 @@
 package com.example.travelmantics;
 
-import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,6 +13,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,8 @@ public class FirebaseUtil {
     public static DatabaseReference mDatabaseReference;
     private static FirebaseUtil firebaseUtil;
     public static FirebaseAuth firebaseAuth;
+    public static FirebaseStorage firebaseStorage;
+    public static StorageReference storageReference;
     public static FirebaseAuth.AuthStateListener authStateListener;
     public static ArrayList<TravelDeal> mDeals;
     private static ListActivity caller;
@@ -36,6 +39,8 @@ public class FirebaseUtil {
 
     public static void openFbReference(String ref, final ListActivity callerActivity) {
         if (firebaseUtil == null) {
+
+            isAdmin = false;//added statement to avoid Null Pointer on isAdmin on List activity
             firebaseUtil = new FirebaseUtil();
             mFirebaseDatabase = FirebaseDatabase.getInstance();
             caller = callerActivity;
@@ -45,14 +50,16 @@ public class FirebaseUtil {
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                     if(firebaseAuth.getCurrentUser() == null) {
                         FirebaseUtil.signIn();
-                    }else{
+                    }else {
                         String userId = firebaseAuth.getUid();
                         checkAdmin(userId);
                     }
-                    Toast.makeText(callerActivity.getBaseContext(),"Welcome Back!",Toast.LENGTH_LONG).show();
+                    //changes here
+                    Toast.makeText( callerActivity.getBaseContext(),"Welcome Back!",Toast.LENGTH_LONG).show();
                 }
 
             };
+            connectStorage();
         }
             mDeals = new ArrayList<TravelDeal>();
             mDatabaseReference = mFirebaseDatabase.getReference().child(ref);
@@ -66,6 +73,7 @@ public class FirebaseUtil {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                FirebaseUtil.isAdmin = true;
+               Log.d("admin","You are a admin");
                caller.showMenu();
             }
 
@@ -103,6 +111,7 @@ public class FirebaseUtil {
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .setAvailableProviders(providers)
+                            //.setIsSmartLockEnabled(false)
                             .build(),
                     RC_SIGN_IN);
         }
@@ -114,7 +123,12 @@ public class FirebaseUtil {
         }
         public static void detachListener () {
             firebaseAuth.removeAuthStateListener(authStateListener);
-        }
+        }public static void connectStorage(){
+            firebaseStorage = FirebaseStorage.getInstance();
+            storageReference = firebaseStorage.getReference().child("deals_pictures");
+    }
+
+
     }
 
 
