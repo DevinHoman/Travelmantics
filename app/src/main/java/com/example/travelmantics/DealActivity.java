@@ -71,23 +71,7 @@ public class DealActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = new MenuInflater(this);
-        inflater.inflate(R.menu.save_menu ,menu);
-        if(FirebaseUtil.isAdmin ){
-            menu.findItem(R.id.delete_menu).setVisible(true);
-            menu.findItem(R.id.save_menu).setVisible(true);
-            enableEditTexts(true);
-            findViewById(R.id.btnImage).setEnabled(true);
-        }else{
-            menu.findItem(R.id.delete_menu).setVisible(false);
-            menu.findItem(R.id.save_menu).setVisible(false);
-            enableEditTexts(false);
-            findViewById(R.id.btnImage).setEnabled(false);
-        }
-        return true;
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -107,6 +91,23 @@ public class DealActivity extends AppCompatActivity {
                     return super.onOptionsItemSelected(item);
 
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = new MenuInflater(this);
+        inflater.inflate(R.menu.save_menu ,menu);
+        if(FirebaseUtil.isAdmin ){
+            menu.findItem(R.id.delete_menu).setVisible(true);
+            menu.findItem(R.id.save_menu).setVisible(true);
+            enableEditTexts(true);
+            findViewById(R.id.btnImage).setEnabled(true);
+        }else{
+            menu.findItem(R.id.delete_menu).setVisible(false);
+            menu.findItem(R.id.save_menu).setVisible(false);
+            enableEditTexts(false);
+            findViewById(R.id.btnImage).setEnabled(false);
+        }
+        return true;
     }
 
     private void clean() {
@@ -157,7 +158,7 @@ public class DealActivity extends AppCompatActivity {
     private void backToList(){
         Intent intent = new Intent(this,ListActivity.class);
         //Added functionality to clear Deal Activity from history stack.
-        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
     }

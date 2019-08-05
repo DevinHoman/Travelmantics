@@ -39,12 +39,12 @@ public class FirebaseUtil {
 
     public static void openFbReference(String ref, final ListActivity callerActivity) {
         if (firebaseUtil == null) {
-
-            isAdmin = false;//added statement to avoid Null Pointer on isAdmin on List activity
+            /*isAdmin = false;added statement to avoid Null Pointer on isAdmin on List activity*/
             firebaseUtil = new FirebaseUtil();
             mFirebaseDatabase = FirebaseDatabase.getInstance();
-            caller = callerActivity;
             firebaseAuth = FirebaseAuth.getInstance();
+            caller = callerActivity;
+
             authStateListener = new FirebaseAuth.AuthStateListener() {
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
