@@ -34,7 +34,7 @@ public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder
         //FirebaseUtil.openFbReference("traveldeals",this);
         mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
-        deals = FirebaseUtil.mDeals;
+        this.deals = FirebaseUtil.mDeals;
         mChildListner = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -126,7 +126,7 @@ public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder
 
             Picasso.get()
                     .load(url)
-                    .resize(160,160)
+                    .resize(200,200)
                     .centerCrop()
                     .into(imageDeal);
         }

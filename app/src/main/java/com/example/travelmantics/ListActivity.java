@@ -38,6 +38,8 @@ public class ListActivity extends AppCompatActivity {
 
 
 
+
+
     }
 
     @Override
@@ -45,8 +47,19 @@ public class ListActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.list_activity_menu ,menu);
         MenuItem insertMenu = menu.findItem(R.id.insert_menu);
+        if(FirebaseUtil.isAdmin == true){
+            insertMenu.setVisible(true);
+        }else{
+            insertMenu.setVisible(false);
+        }
+        return true;
+    }
 
-        if(FirebaseUtil.isAdmin){
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem insertMenu = menu.findItem(R.id.insert_menu);
+
+        if(FirebaseUtil.isAdmin == true){
             insertMenu.setVisible(true);
         }else{
             insertMenu.setVisible(false);
@@ -67,9 +80,10 @@ public class ListActivity extends AppCompatActivity {
                         .signOut(this)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             public void onComplete(@NonNull Task<Void> task) {
-                               Log.d("logout","User logged out");
-                               FirebaseUtil.attachListener();
+                                Log.d("logout", "User logged out");
+                                FirebaseUtil.attachListener();
                             }
+
                         });
                 FirebaseUtil.detachListener();
                 return true;

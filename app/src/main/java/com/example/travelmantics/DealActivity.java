@@ -48,7 +48,7 @@ public class DealActivity extends AppCompatActivity {
         txtDescription = findViewById(R.id.txtDescription);
         txtPrice = findViewById(R.id.txtPrice);
 
-        imageView = (ImageView) findViewById(R.id.image);
+        imageView = findViewById(R.id.deal_image);
         Intent intent = getIntent();
         TravelDeal deal = (TravelDeal)intent.getSerializableExtra("Deal");
         if(deal == null){
@@ -71,23 +71,7 @@ public class DealActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = new MenuInflater(this);
-        inflater.inflate(R.menu.save_menu ,menu);
-        if(FirebaseUtil.isAdmin ){
-            menu.findItem(R.id.delete_menu).setVisible(true);
-            menu.findItem(R.id.save_menu).setVisible(true);
-            enableEditTexts(true);
-            findViewById(R.id.btnImage).setEnabled(true);
-        }else{
-            menu.findItem(R.id.delete_menu).setVisible(false);
-            menu.findItem(R.id.save_menu).setVisible(false);
-            enableEditTexts(false);
-            findViewById(R.id.btnImage).setEnabled(false);
-        }
-        return true;
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -107,6 +91,23 @@ public class DealActivity extends AppCompatActivity {
                     return super.onOptionsItemSelected(item);
 
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = new MenuInflater(this);
+        inflater.inflate(R.menu.save_menu ,menu);
+        if(FirebaseUtil.isAdmin ){
+            menu.findItem(R.id.delete_menu).setVisible(true);
+            menu.findItem(R.id.save_menu).setVisible(true);
+            enableEditTexts(true);
+            findViewById(R.id.btnImage).setEnabled(true);
+        }else{
+            menu.findItem(R.id.delete_menu).setVisible(false);
+            menu.findItem(R.id.save_menu).setVisible(false);
+            enableEditTexts(false);
+            findViewById(R.id.btnImage).setEnabled(false);
+        }
+        return true;
     }
 
     private void clean() {
@@ -157,7 +158,7 @@ public class DealActivity extends AppCompatActivity {
     private void backToList(){
         Intent intent = new Intent(this,ListActivity.class);
         //Added functionality to clear Deal Activity from history stack.
-        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
     }
@@ -176,23 +177,24 @@ public class DealActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICTURE_RESULT && resultCode == RESULT_OK){
+        if (requestCode == PICTURE_RESULT && resultCode == RESULT_OK) {
             Uri imageUri = data.getData();
             final StorageReference ref = FirebaseUtil.storageReference.child(imageUri.getLastPathSegment());
             ref.putFile(imageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    String url = ref.getDownloadUrl().toString();
                     String pictureName = taskSnapshot.getStorage().getPath();
-                    deal.setImageURL(url);
                     deal.setImageName(pictureName);
-                    Log.d("URL :",url);
-                    Log.d("Name :",pictureName);
-                    showImage(url);
+                    ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            deal.setImageURL(uri.toString());
+                            showImage(uri.toString());
+                        }
+                    });
                 }
             });
         }
-
     }
 
     private void showImage(String url){
@@ -200,7 +202,7 @@ public class DealActivity extends AppCompatActivity {
             int width = Resources.getSystem().getDisplayMetrics().widthPixels;
             Picasso.get()
                     .load(url)
-                    .resize(width,width *2/3)
+                    .resize(width*7/8,width *2/3)
                     .centerCrop()
                     .into(imageView);
 
