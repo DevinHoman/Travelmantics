@@ -48,7 +48,7 @@ public class DealActivity extends AppCompatActivity {
         txtDescription = findViewById(R.id.txtDescription);
         txtPrice = findViewById(R.id.txtPrice);
 
-        imageView = (ImageView) findViewById(R.id.image);
+        imageView = findViewById(R.id.deal_image);
         Intent intent = getIntent();
         TravelDeal deal = (TravelDeal)intent.getSerializableExtra("Deal");
         if(deal == null){
@@ -177,23 +177,24 @@ public class DealActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICTURE_RESULT && resultCode == RESULT_OK){
+        if (requestCode == PICTURE_RESULT && resultCode == RESULT_OK) {
             Uri imageUri = data.getData();
             final StorageReference ref = FirebaseUtil.storageReference.child(imageUri.getLastPathSegment());
             ref.putFile(imageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    String url = ref.getDownloadUrl().toString();
                     String pictureName = taskSnapshot.getStorage().getPath();
-                    deal.setImageURL(url);
                     deal.setImageName(pictureName);
-                    Log.d("URL :",url);
-                    Log.d("Name :",pictureName);
-                    showImage(url);
+                    ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            deal.setImageURL(uri.toString());
+                            showImage(uri.toString());
+                        }
+                    });
                 }
             });
         }
-
     }
 
     private void showImage(String url){
@@ -201,7 +202,7 @@ public class DealActivity extends AppCompatActivity {
             int width = Resources.getSystem().getDisplayMetrics().widthPixels;
             Picasso.get()
                     .load(url)
-                    .resize(width,width *2/3)
+                    .resize(width*7/8,width *2/3)
                     .centerCrop()
                     .into(imageView);
 
