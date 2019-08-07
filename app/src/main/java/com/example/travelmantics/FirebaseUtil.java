@@ -31,7 +31,7 @@ public class FirebaseUtil {
     public static ArrayList<TravelDeal> mDeals;
     private static ListActivity caller;
     private static final int RC_SIGN_IN = 123;
-    public static Boolean isAdmin;
+    private static Boolean isAdmin;
 
 
     private FirebaseUtil() {
@@ -39,7 +39,7 @@ public class FirebaseUtil {
 
     public static void openFbReference(String ref, final ListActivity callerActivity) {
         if (firebaseUtil == null) {
-            isAdmin = false;//added statement to avoid Null Pointer on isAdmin on List activity
+            //isAdmin = false;//added statement to avoid Null Pointer on isAdmin on List activity
             firebaseUtil = new FirebaseUtil();
             mFirebaseDatabase = FirebaseDatabase.getInstance();
             firebaseAuth = FirebaseAuth.getInstance();
@@ -50,12 +50,14 @@ public class FirebaseUtil {
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                     if(firebaseAuth.getCurrentUser() == null) {
                         FirebaseUtil.signIn();
+
                     }else {
                         String userId = firebaseAuth.getUid();
                         checkAdmin(userId);
+                        Toast.makeText( callerActivity.getBaseContext(),"Welcome Back!",Toast.LENGTH_LONG).show();
                     }
                     //changes here
-                    Toast.makeText( callerActivity.getBaseContext(),"Welcome Back!",Toast.LENGTH_LONG).show();
+
                 }
 
             };
@@ -66,13 +68,13 @@ public class FirebaseUtil {
         }
 
     public static void checkAdmin(String userId) {
-        FirebaseUtil.isAdmin = false;
+        FirebaseUtil.setIsAdmin(false);
         DatabaseReference ref = mFirebaseDatabase.getReference().child("administrators")
                 .child(userId);
         ChildEventListener listener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-               FirebaseUtil.isAdmin = true;
+               FirebaseUtil.setIsAdmin(true);
                Log.d("admin","You are a admin");
                caller.showMenu();
             }
@@ -129,6 +131,13 @@ public class FirebaseUtil {
     }
 
 
+    public static Boolean getIsAdmin() {
+        return isAdmin;
     }
+
+    public static void setIsAdmin(Boolean isAdmin) {
+        FirebaseUtil.isAdmin = isAdmin;
+    }
+}
 
 

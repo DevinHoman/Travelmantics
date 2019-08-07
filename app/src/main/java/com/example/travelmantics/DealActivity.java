@@ -96,7 +96,7 @@ public class DealActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = new MenuInflater(this);
         inflater.inflate(R.menu.save_menu ,menu);
-        if(FirebaseUtil.isAdmin ){
+        if(FirebaseUtil.getIsAdmin()){
             menu.findItem(R.id.delete_menu).setVisible(true);
             menu.findItem(R.id.save_menu).setVisible(true);
             enableEditTexts(true);
@@ -136,7 +136,7 @@ public class DealActivity extends AppCompatActivity {
             return;
         }
         mDatabaseReference.child(deal.getId()).removeValue();
-        Log.d("image name" ,deal.getImageName());
+       // Log.d("image name" ,deal.getImageName());
         if(deal.getImageName() != null && deal.getImageName().isEmpty()==false){
             StorageReference picRef = FirebaseUtil.firebaseStorage.getReference().child(deal.getImageName());
             picRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {

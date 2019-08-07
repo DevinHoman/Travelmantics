@@ -11,13 +11,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -40,17 +40,26 @@ public class ListActivity extends AppCompatActivity {
 
 
 
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.list_activity_menu ,menu);
+        inflater.inflate(R.menu.list_activity_menu, menu);
         MenuItem insertMenu = menu.findItem(R.id.insert_menu);
-        if(FirebaseUtil.isAdmin == true){
-            insertMenu.setVisible(true);
-        }else{
-            insertMenu.setVisible(false);
+        //isadmin sometimes null , added try,catch to keep app from crashing
+        try {
+            if (FirebaseUtil.getIsAdmin()) {
+                insertMenu.setVisible(true);
+            } else {
+                insertMenu.setVisible(false);
+            }
+
+        }catch (Exception e){
+
+            FirebaseUtil.setIsAdmin(false);
+            Toast.makeText(this,"Oeps, please log in again!",Toast.LENGTH_LONG).show();
         }
         return true;
     }
@@ -58,11 +67,16 @@ public class ListActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem insertMenu = menu.findItem(R.id.insert_menu);
+        try {
+            if (FirebaseUtil.getIsAdmin()) {
+                insertMenu.setVisible(true);
+            } else {
+                insertMenu.setVisible(false);
+            }
 
-        if(FirebaseUtil.isAdmin == true){
-            insertMenu.setVisible(true);
-        }else{
-            insertMenu.setVisible(false);
+        } catch (Exception e) {
+            FirebaseUtil.setIsAdmin(false);
+            Toast.makeText(this, "Error,Please log in again!", Toast.LENGTH_LONG).show();
         }
         return true;
     }
